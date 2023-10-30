@@ -8,9 +8,10 @@ export const getInput =(questionMess:string) =>{
     })
     return new Promise((resolve,reject)=>{
         rl.question(questionMess,(input)=>{
-            resolve(input)
             rl.close()
+            resolve(input)
         })
+        
     })
 
 }

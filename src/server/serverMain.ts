@@ -13,6 +13,7 @@ interface targetType{
 }
 interface clientType{
     id:string,
+    conTarget:string
     sendSys?:any
 }
 
@@ -52,6 +53,7 @@ server.on("connection",(socket)=>{
         }else if(getData.type === "first-client"){
             const listData:clientType = {
                 id:uuid.v4(),
+                conTarget:"",
                 sendSys:socket
             }
             id = listData.id
@@ -60,6 +62,13 @@ server.on("connection",(socket)=>{
             socket.write(sendData)
         }else if(getData.type === "select-target"){
             console.log(getData.data[0])
+            const clientIndex = clientList.findIndex(elem=>elem.id ===id)
+            clientList[clientIndex].conTarget = getData.data[0]
+            const targetIndex = publickTargetList.findIndex(elem=>elem.id === getData.data[0])
+            const sendData = JSON.stringify(createSendData("connectedInfo",[publickTargetList[targetIndex]]))
+            socket.write(sendData)
+            console.log(clientList)
+
         }
     })
     socket.on("close",()=>{

@@ -1,4 +1,5 @@
 import { createSendData } from "../functions/createSendData"
+import { checkCmd } from "./checkCmd"
 import { getInput } from "./getInput"
 
 interface targetType{
@@ -9,7 +10,12 @@ interface targetType{
 }
 export let targetList:targetType[] = []
 
-
+const getMainCommand = async(ip:string)=>{
+    while (true){
+        const cmd = await getInput(`$ ${ip}>`)
+        checkCmd(cmd)
+    }
+}
 
 export const getFun = async(data:string,client:any)=>{
     const getData = JSON.parse(data)
@@ -21,11 +27,27 @@ export const getFun = async(data:string,client:any)=>{
         })
         console.log("------------------------------------------")
         //どれに接続するか選択させる
-        const connectNum = await getInput("Select target:")
-        let connectId:string = targetList[Number(connectNum)].id
-        const sendData = JSON.stringify(createSendData("select-target",[connectId]))
-        client.write(sendData)
+        let connectNum = await getInput("select target:")
+        if(!connectNum){
+            let selectFlg:boolean = true
+            while (selectFlg){
+                connectNum = await getInput("select target:")
+                if(connectNum){
+                    selectFlg =false
+                }
+            }
+        }
+        try{
+            let connectId:string = targetList[Number(connectNum)].id
+            const sendData = JSON.stringify(createSendData("select-target",[connectId]))
+            client.write(sendData)
+        }catch{
+            console.log("error")
+        }
         
+    }else if(getData.type === "connectedInfo"){
+        console.log(`Successful connection to ${getData.data[0].globalIP}:${getData.data[0].localIP}`)
+        getMainCommand(`${getData.data[0].globalIP}:${getData.data[0].localIP}`)
     }
     
 }
