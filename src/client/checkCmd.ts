@@ -11,6 +11,12 @@ export const checkCmdMain = (userIp:string,cmd:string)=>{
         }else{
             console.log("Not enough factor")
         }
+    }else if(getCmd[0] == "dir" || getCmd[0] == "ls"){
+        cmd = "dir"
+        const sendData = JSON.stringify(createSendData("sendCmdText",[cmd]))
+        client.write(sendData)
+    }else{
+        console.log("No Command")
     }
     getMainCommand(userIp)
 }

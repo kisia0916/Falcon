@@ -2,10 +2,11 @@ import * as net from "net"
 import * as os from "os"
 import {getIp, ipResType} from "./getIP"
 import { tcpDataType } from "../types/tcpDataType"
+import { getSendData } from "./getData"
 let target:any = undefined
 const host:string = "localhost"
 const port:number = 3000
-let id:string = ""
+export let id:string = ""
 
 const initSys = async()=>{
     console.log("connecting server....")
@@ -30,8 +31,8 @@ const initSys = async()=>{
         const getData = JSON.parse(data)
         if(getData.type === "sendIP"){
             id = getData.data[0]
-        }else if(getData.type === "sendCmd"){
-            console.log(getData.data[0])
+        }else{
+            getSendData(data)
         }
      })
 
