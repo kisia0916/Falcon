@@ -9,13 +9,17 @@ export const getSendData = (data:string)=>{
         const cmdList:string[] = getData.data[0].split(" ")
         let runCmd:string = ""
         runCmdList.forEach((i,index)=>{//ここおかしい
-            if(index != 0){
-                runCmd+=` & ${i}`
-            }else if(index == runCmdList.length-1){
-                runCmd+=` & ${i} & `
-            }else{
-                runCmd+=`${i}`
-            }
+            // if(index != 0){
+            //     runCmd+=` & ${i}`
+            // }else if(index == runCmdList.length-1){
+            //     runCmd+=` & ${i} & `
+            // }else{
+            //     runCmd+=`${i}`
+            // }
+            // if(index != runCmdList.length-1){
+                
+            // }
+            runCmd+=`${i} & `
         })
         runCmd+=`${getData.data[0]}`
         console.log(runCmd)
