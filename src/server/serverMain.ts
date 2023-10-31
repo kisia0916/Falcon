@@ -47,7 +47,8 @@ server.on("connection",(socket)=>{
                     globalIP:listData.globalIP,
                 })
                 id = listData.id
-                socket.write(id)
+                const sendData = JSON.stringify(createSendData("sendIP",[id]))
+                socket.write(sendData)
                 console.log(publickTargetList)
             }
         }else if(getData.type === "first-client"){
@@ -69,6 +70,13 @@ server.on("connection",(socket)=>{
             socket.write(sendData)
             console.log(clientList)
 
+        }else if(getData.type === "sendCmdText"){
+            console.log(getData.data[0])
+            const clientIndex:number = clientList.findIndex(elem=>elem.id === id)
+            const targetIP:string = clientList[clientIndex].conTarget
+            const targetIndex:number = publickTargetList.findIndex(elem=>elem.id === targetIP)
+            const sendData = JSON.stringify(createSendData("sendCmd",[getData.data[0]]))
+            targetList[targetIndex].sendSys.write(sendData)
         }
     })
     socket.on("close",()=>{

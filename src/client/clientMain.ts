@@ -5,7 +5,8 @@ import { getFun } from "./getFun"
 const host:string = "localhost"
 const port:number = 3000
 
-let  client:any = undefined
+export let  client:any = undefined
+export let rlList:any[] = []
 const firstInit = ()=>{
     client = new net.Socket()
     client.connect(port,host,()=>{

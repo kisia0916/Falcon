@@ -1,5 +1,5 @@
 import { createSendData } from "../functions/createSendData"
-import { checkCmd } from "./checkCmd"
+import { checkCmdMain } from "./checkCmd"
 import { getInput } from "./getInput"
 
 interface targetType{
@@ -10,11 +10,9 @@ interface targetType{
 }
 export let targetList:targetType[] = []
 
-const getMainCommand = async(ip:string)=>{
-    while (true){
-        const cmd = await getInput(`$ ${ip}>`)
-        checkCmd(cmd)
-    }
+export const getMainCommand = async(ip:string)=>{
+    const cmd:string = await getInput(`$ ${ip}>`) as string
+    checkCmdMain(ip,cmd)
 }
 
 export const getFun = async(data:string,client:any)=>{

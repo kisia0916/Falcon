@@ -27,7 +27,12 @@ const initSys = async()=>{
      }
      target.write(JSON.stringify(firstSendData))
      target.on("data",(data:any)=>{
-        id = data
+        const getData = JSON.parse(data)
+        if(getData.type === "sendIP"){
+            id = getData.data[0]
+        }else if(getData.type === "sendCmd"){
+            console.log(getData.data[0])
+        }
      })
 
 }
