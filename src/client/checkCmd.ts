@@ -22,8 +22,8 @@ export const checkCmdMain = (userIp:string,cmd:string)=>{
         const sendData = JSON.stringify(createSendData("sendCmdText",[cmd]))
         client.write(sendData)
     }else if(getCmd[0] == "ul"){
-        if(getCmd.length>1){
-            uploadFile(getCmd[1])
+        if(getCmd.length>2){
+            uploadFile(getCmd[1],getCmd[2])
         }
     }else{
         console.log("No Command")

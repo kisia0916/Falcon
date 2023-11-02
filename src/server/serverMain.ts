@@ -26,10 +26,12 @@ server.on("connection",(socket)=>{
     console.log("connected")
     let id:string = ""
     let nowFileName:string = ""
+    let nowFilePath:string = ""
     let startUL:boolean = false
     let firstUL:boolean = true
     let nowFileSize:number = 0
     let nowFileMaxSize:number = 0
+    let targetID:string = ""
     socket.on("data",async(data:string)=>{
         if(!startUL){
             const getData:tcpDataType = JSON.parse(data)
@@ -90,55 +92,19 @@ server.on("connection",(socket)=>{
             }else if(getData.type === "sendFileName"){
                 nowFileName = getData.data[0]
                 nowFileMaxSize = getData.data[1]
+                nowFilePath = getData.data[2]
                 startUL = true
                 firstUL = true
-            }else if(getData.type === "sendFileBuffer"){
-                console.log("1")
-                const appendData = getData.data
-                console.log(appendData)
-                const fileList:string[] = nowFileName.split(".")
-                if(!startUL){
-                    // fs.writeFile(`./uploadFile/upload.${fileList[fileList.length-1]}`,appendData,'binary',(err)=>{
-                    //     startUL = true
-                    // })
-                }else{
-                    // fs.appendFile(nowFileName,appendData.data,(error)=>{
-                    //     if(error){
-                    //         console.log(error)
-                    //     }
-                    //     const appendDataSize = fs.statSync(`./uploadFile/upload.${fileList[fileList.length-1]}`)
-                    //     console.log(appendDataSize)
-                    // })
-                }
+                const clientIndex:number = clientList.findIndex(elem=>elem.id === id)
+                const targetIndex:number = targetList.findIndex(elem=>elem.id == clientList[clientIndex].conTarget)
+                const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath,getData.data[3]]))
+                targetID = targetList[targetIndex].id
+                targetList[targetIndex].sendSys.write(sendData)
             }
         }else{
-            const appendData = data
-            console.log(appendData)
-            const fileList:string[] = nowFileName.split(".")
-            if(firstUL){
-                fs.writeFile(`./uploadFile/upload.${fileList[fileList.length-1]}`,appendData,'binary',(err)=>{
-                    startUL = false
-                    const appendDataSize:number = fs.statSync(`./uploadFile/upload.${fileList[fileList.length-1]}`).size
-                    if(nowFileMaxSize <= appendDataSize){
-                        console.log("done")
-                        startUL = false
-                        firstUL = true
-                    }
-                })
+            const targetIndex:number = targetList.findIndex(elem=>elem.id === targetID)
 
-            }else{
-                fs.appendFile(nowFileName,appendData,(error)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    const appendDataSize = fs.statSync(`./uploadFile/upload.${fileList[fileList.length-1]}`).size
-                    if(appendDataSize>=nowFileMaxSize){
-                        console.log("done2")
-                        startUL = false
-                        firstUL = true
-                    }
-                })
-            }
+            targetList[targetIndex].sendSys.write(data)
         }
     })
     socket.on("close",()=>{

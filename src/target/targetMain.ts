@@ -2,9 +2,11 @@ import * as net from "net"
 import * as os from "os"
 import {getIp, ipResType} from "./getIP"
 import { tcpDataType } from "../types/tcpDataType"
-import { getSendData } from "./getData"
+import { getSendData, startUpload } from "./getData"
 export let target:any = undefined
-const host:string = "192.168.11.10"
+// const host:string = "0.tcp.jp.ngrok.io"
+// const port:number = 10353
+const host:string = "localhost"
 const port:number = 3000
 export let id:string = ""
 
@@ -28,9 +30,13 @@ const initSys = async()=>{
      }
      target.write(JSON.stringify(firstSendData))
      target.on("data",(data:any)=>{
-        const getData = JSON.parse(data)
-        if(getData.type === "sendIP"){
-            id = getData.data[0]
+        if(!startUpload){
+            const getData = JSON.parse(data)
+            if(getData.type === "sendIP"){
+                id = getData.data[0]
+            }else{
+                getSendData(data)
+            }
         }else{
             getSendData(data)
         }

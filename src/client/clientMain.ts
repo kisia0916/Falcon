@@ -2,7 +2,9 @@ import * as net from "net"
 import { getInput } from "./getInput"
 import { createSendData } from "../functions/createSendData"
 import { getFun } from "./getFun"
-const host:string = "192.168.11.10"
+// const host:string = "0.tcp.jp.ngrok.io"
+// const port:number = 10353
+const host:string = "localhost"
 const port:number = 3000
 
 export let  client:any = undefined
