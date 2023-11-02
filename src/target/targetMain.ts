@@ -4,7 +4,7 @@ import {getIp, ipResType} from "./getIP"
 import { tcpDataType } from "../types/tcpDataType"
 import { getSendData } from "./getData"
 export let target:any = undefined
-const host:string = "localhost"
+const host:string = "192.168.11.10"
 const port:number = 3000
 export let id:string = ""
 

@@ -2,7 +2,7 @@ import * as net from "net"
 import { getInput } from "./getInput"
 import { createSendData } from "../functions/createSendData"
 import { getFun } from "./getFun"
-const host:string = "localhost"
+const host:string = "192.168.11.10"
 const port:number = 3000
 
 export let  client:any = undefined
