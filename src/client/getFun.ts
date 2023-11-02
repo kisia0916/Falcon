@@ -1,5 +1,5 @@
 import { createSendData } from "../functions/createSendData"
-import { checkCmdMain } from "./checkCmd"
+import { checkCmdMain, userIP } from "./checkCmd"
 import { getInput } from "./getInput"
 
 interface targetType{
@@ -46,6 +46,10 @@ export const getFun = async(data:string,client:any)=>{
     }else if(getData.type === "connectedInfo"){
         console.log(`Successful connection to ${getData.data[0].globalIP}:${getData.data[0].localIP}`)
         getMainCommand(`${getData.data[0].globalIP}:${getData.data[0].localIP}`)
+    }else if(getData.type === "cmdResoultClient"){
+        console.log(getData.data[0])
+        getMainCommand(userIP)
+        
     }
     
 }

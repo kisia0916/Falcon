@@ -3,7 +3,7 @@ import * as os from "os"
 import {getIp, ipResType} from "./getIP"
 import { tcpDataType } from "../types/tcpDataType"
 import { getSendData } from "./getData"
-let target:any = undefined
+export let target:any = undefined
 const host:string = "localhost"
 const port:number = 3000
 export let id:string = ""
