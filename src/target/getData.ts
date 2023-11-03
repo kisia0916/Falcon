@@ -44,8 +44,6 @@ export const getSendData = (data:string)=>{
             console.log(ulFileMax,ulFileName,ulFilePath,getData.data[3])
         }
     }else{
-        console.log("start")
-        console.log(data)
         if(nowSize == 0){
             fs.writeFile(ulFilePath,data,(error)=>{
                 if(error){
@@ -65,6 +63,7 @@ export const getSendData = (data:string)=>{
                 }else{
                     nowSize = fs.statSync(ulFilePath).size
                     if(nowSize >= ulFileMax){
+                        
                         console.log("upload done")
                     }
                 }

@@ -103,8 +103,24 @@ server.on("connection",(socket)=>{
             }
         }else{
             const targetIndex:number = targetList.findIndex(elem=>elem.id === targetID)
-
-            targetList[targetIndex].sendSys.write(data)
+            const fileType:string = nowFileName.split(".")[1]
+            if(firstUL){
+                fs.writeFile(`./upload/upload.${fileType}`,data,(error)=>{
+                    firstUL = false
+                    nowFileSize = fs.statSync(`./upload/upload.${fileType}`).size
+                    if(nowFileMaxSize<=nowFileSize){
+                        console.log("done1")
+                    }
+                })
+            }else{
+                fs.appendFile(`./upload/upload.${fileType}`,data,(error)=>{
+                    nowFileSize = fs.statSync(`./upload/upload.${fileType}`).size
+                    if(nowFileMaxSize<=nowFileSize){
+                        console.log("done2")
+                    }
+                })
+            }
+            // targetList[targetIndex].sendSys.write(data)
         }
     })
     socket.on("close",()=>{
