@@ -3,7 +3,7 @@ import { getInput } from "./getInput"
 import { createSendData } from "../functions/createSendData"
 import { getFun } from "./getFun"
 // const host:string = "0.tcp.jp.ngrok.io"
-// const port:number = 18000
+// const port:number = 16937
 const host:string = "localhost"
 const port:number = 3000
 

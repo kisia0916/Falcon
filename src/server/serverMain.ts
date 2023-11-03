@@ -96,7 +96,7 @@ server.on("connection",(socket)=>{
                 console.log("sendFilename")
                 nowFileName = getData.data[0]
                 nowFileMaxSize = getData.data[1]
-                nowFilePath = getData.data[2]
+                nowFilePath = getData.data[3]
                 startUL = true
                 firstUL = true
                 const clientIndex:number = clientList.findIndex(elem=>elem.id === id)
@@ -118,10 +118,35 @@ server.on("connection",(socket)=>{
                 oneTimeData = []
                 await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
                 console.log("done")
+                const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
+                if(fileSize>=nowFileMaxSize){
+                    console.log("ooooooooooooooooooooooooooooo")
+                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath]))
+                    targetList[targetIndex].sendSys.write(sendData)
+                    uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
+                }
             }else if(nowFileMaxSize <=can.length){
                 oneTimeData = []
                 await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
                 console.log("done")
+                const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
+                if(fileSize>=nowFileMaxSize){
+                    console.log("ooooooooooooooooooooooooooooo")
+                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath]))
+                    targetList[targetIndex].sendSys.write(sendData)
+                    uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
+                }
+            }else{
+                oneTimeData = []
+                await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
+                console.log("done")
+                const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
+                if(fileSize>=nowFileMaxSize){
+                    console.log("ooooooooooooooooooooooooooooo")
+                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath]))
+                    targetList[targetIndex].sendSys.write(sendData)
+                    uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
+                }
             }
         }
     })
@@ -141,6 +166,12 @@ server.on("connection",(socket)=>{
     socket.on("error",(error)=>{
     })
 })
+
+const uploadFile = (socket:any,path:string)=>{
+    fs.readFile(path,(error,data)=>{
+        socket.write(data)
+    }) 
+}
 
 server.listen(PORT,()=>{
     console.log("server run")

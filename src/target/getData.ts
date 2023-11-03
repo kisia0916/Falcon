@@ -5,13 +5,15 @@ import Encoding from  'encoding-japanese'
 import { createSendData } from "../functions/createSendData"
 
 let runCmdList:string[] = []
+let oneTimeData:any[] = []
 export let startUpload:boolean = false
 let ulFileName:string = ""
 let ulFileMax:number = 0
 let ulFilePath:string = ""
+let ulFileNowSize:number = 0
 
 let nowSize:number = 0
-export const getSendData = (data:string)=>{
+export const getSendData = async(data:string)=>{
     if(!startUpload){
         const getData = JSON.parse(data)
         if(getData.type === "sendCmd"){
@@ -40,34 +42,27 @@ export const getSendData = (data:string)=>{
             startUpload = true
             ulFileName = getData.data[0]
             ulFileMax = getData.data[1]
-            ulFilePath = getData.data[3]
-            console.log(ulFileMax,ulFileName,ulFilePath,getData.data[3])
+            ulFilePath = getData.data[2]
+            console.log(ulFileMax,ulFileName,ulFilePath,getData.data[2])
         }
     }else{
-        if(nowSize == 0){
-            fs.writeFile(ulFilePath,data,(error)=>{
-                if(error){
-
-                }else{
-                    nowSize = fs.statSync(ulFilePath).size
-                    console.log(nowSize)
-                    if(nowSize >= ulFileMax){
-                        console.log("upload done")
-                    }
-                }
-            })
+        console.log("start")
+        oneTimeData.push(data)
+        const can = Buffer.concat(oneTimeData)
+        ulFileNowSize = Buffer.concat(oneTimeData).length
+        console.log(ulFilePath)
+        if(ulFileNowSize>=100000){
+            oneTimeData = []
+            await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
+            console.log("done")
+        }else if(ulFileNowSize <=can.length){
+            oneTimeData = []
+            await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
+            console.log("done")
         }else{
-            fs.appendFile(ulFilePath,data,(error)=>{
-                if(error){
-
-                }else{
-                    nowSize = fs.statSync(ulFilePath).size
-                    if(nowSize >= ulFileMax){
-                        
-                        console.log("upload done")
-                    }
-                }
-            })
+            oneTimeData = []
+            await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
+            console.log("done")
         }
     }
 }
