@@ -50,6 +50,9 @@ export const getFun = async(data:string,client:any)=>{
         console.log(getData.data[0])
         getMainCommand(userIP)
         
+    }else if(getData.type === "doneUploadServer"){
+        console.log("upload server done")
+        console.log("uploading target.....")
     }
     
 }

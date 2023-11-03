@@ -101,9 +101,12 @@ server.on("connection",(socket)=>{
                 firstUL = true
                 const clientIndex:number = clientList.findIndex(elem=>elem.id === id)
                 const targetIndex:number = targetList.findIndex(elem=>elem.id == clientList[clientIndex].conTarget)
-                const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath,getData.data[3]]))
+                const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath,getData.data[3],id]))
                 targetID = targetList[targetIndex].id
                 targetList[targetIndex].sendSys.write(sendData)
+            }else if(getData.type === "doneUploadTarget"){
+                console.log(id)
+                console.log(getData.data[0])
             }
         }else{
             const targetIndex:number = targetList.findIndex(elem=>elem.id === targetID)
@@ -121,9 +124,17 @@ server.on("connection",(socket)=>{
                 const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
                 if(fileSize>=nowFileMaxSize){
                     console.log("ooooooooooooooooooooooooooooo")
-                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath]))
+                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath,id]))
                     targetList[targetIndex].sendSys.write(sendData)
+                    nowFileName = ""
+                    nowFilePath = ""
+                    startUL = false
+                    firstUL = true
+                    nowFileSize = 0
+                    nowFileMaxSize = 0
                     uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
+                    const doneData = JSON.stringify(createSendData("doneUploadServer",[]))
+                    socket.write(doneData)
                 }
             }else if(nowFileMaxSize <=can.length){
                 oneTimeData = []
@@ -132,9 +143,17 @@ server.on("connection",(socket)=>{
                 const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
                 if(fileSize>=nowFileMaxSize){
                     console.log("ooooooooooooooooooooooooooooo")
-                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath]))
+                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath,id]))
                     targetList[targetIndex].sendSys.write(sendData)
+                    nowFileName = ""
+                    nowFilePath = ""
+                    startUL = false
+                    firstUL = true
+                    nowFileSize = 0
+                    nowFileMaxSize = 0
                     uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
+                    const doneData = JSON.stringify(createSendData("doneUploadServer",[]))
+                    socket.write(doneData)
                 }
             }else{
                 oneTimeData = []
@@ -145,7 +164,15 @@ server.on("connection",(socket)=>{
                     console.log("ooooooooooooooooooooooooooooo")
                     const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath]))
                     targetList[targetIndex].sendSys.write(sendData)
+                    nowFileName = ""
+                    nowFilePath = ""
+                    startUL = false
+                    firstUL = true
+                    nowFileSize = 0
+                    nowFileMaxSize = 0
                     uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
+                    const doneData = JSON.stringify(createSendData("doneUploadServer",[]))
+                    socket.write(doneData)
                 }
             }
         }
@@ -172,6 +199,7 @@ const uploadFile = (socket:any,path:string)=>{
         socket.write(data)
     }) 
 }
+
 
 server.listen(PORT,()=>{
     console.log("server run")

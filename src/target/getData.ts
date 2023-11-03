@@ -11,7 +11,7 @@ let ulFileName:string = ""
 let ulFileMax:number = 0
 let ulFilePath:string = ""
 let ulFileNowSize:number = 0
-
+let nowConnectionClient:string = ""
 let nowSize:number = 0
 export const getSendData = async(data:string)=>{
     if(!startUpload){
@@ -21,10 +21,10 @@ export const getSendData = async(data:string)=>{
             const cmdList:string[] = getData.data[0].split(" ")
             let runCmd:string = "chcp 65001  &"
             runCmdList.forEach((i,index)=>{//ここおかしい
-
                 runCmd+=`${i} & `
             })
             runCmd+=`${getData.data[0]}`
+            nowConnectionClient = getData.data[1]
             exec(runCmd,{encoding:'utf-8'},(error: any, stdout: any, stderr: any)=>{
                 if(!error && !stderr){
                     const sendData = JSON.stringify(createSendData("cmdResoult",[getData.data[1],stdout]))
@@ -43,6 +43,7 @@ export const getSendData = async(data:string)=>{
             ulFileName = getData.data[0]
             ulFileMax = getData.data[1]
             ulFilePath = getData.data[2]
+            nowConnectionClient = getData.data[4]
             console.log(ulFileMax,ulFileName,ulFilePath,getData.data[2])
         }
     }else{
@@ -55,14 +56,27 @@ export const getSendData = async(data:string)=>{
             oneTimeData = []
             await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
             console.log("done")
+            
+            if(ulFileMax<=fs.statSync(ulFilePath).size){
+                const sendData = JSON.stringify(createSendData("doneUploadTarget",[nowConnectionClient]))
+                target.write(sendData)
+            }
         }else if(ulFileNowSize <=can.length){
             oneTimeData = []
             await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
             console.log("done")
+            if(ulFileMax<=fs.statSync(ulFilePath).size){
+                const sendData = JSON.stringify(createSendData("doneUploadTarget",[nowConnectionClient]))
+                target.write(sendData)
+            }
         }else{
             oneTimeData = []
             await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
             console.log("done")
+            if(ulFileMax<=fs.statSync(ulFilePath).size){
+                const sendData = JSON.stringify(createSendData("doneUploadTarget",[nowConnectionClient]))
+                target.write(sendData)
+            }
         }
     }
 }
