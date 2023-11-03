@@ -31,6 +31,9 @@ server.on("connection",(socket)=>{
     let firstUL:boolean = true
     let nowFileSize:number = 0
     let nowFileMaxSize:number = 0
+    let test:any[] = []
+    let oneTimeData:any[] = []
+    const oneDataSize:number = 3000
     let targetID:string = ""
     socket.on("data",async(data:string)=>{
         if(!startUL){
@@ -90,6 +93,7 @@ server.on("connection",(socket)=>{
                 const clientIndex:number = clientList.findIndex(elem=>elem.id === getData.data[0])
                 clientList[clientIndex].sendSys.write(sendData)
             }else if(getData.type === "sendFileName"){
+                console.log("sendFilename")
                 nowFileName = getData.data[0]
                 nowFileMaxSize = getData.data[1]
                 nowFilePath = getData.data[2]
@@ -104,23 +108,21 @@ server.on("connection",(socket)=>{
         }else{
             const targetIndex:number = targetList.findIndex(elem=>elem.id === targetID)
             const fileType:string = nowFileName.split(".")[1]
-            if(firstUL){
-                fs.writeFile(`./upload/upload.${fileType}`,data,(error)=>{
-                    firstUL = false
-                    nowFileSize = fs.statSync(`./upload/upload.${fileType}`).size
-                    if(nowFileMaxSize<=nowFileSize){
-                        console.log("done1")
-                    }
-                })
-            }else{
-                fs.appendFile(`./upload/upload.${fileType}`,data,(error)=>{
-                    nowFileSize = fs.statSync(`./upload/upload.${fileType}`).size
-                    if(nowFileMaxSize<=nowFileSize){
-                        console.log("done2")
-                    }
-                })
+            console.log("start")
+            console.log(firstUL)
+            const dataBinary = Buffer.from(data,"binary")
+            oneTimeData.push(data)
+            const can = Buffer.concat(oneTimeData)
+            nowFileSize = Buffer.concat(oneTimeData).length
+            if(nowFileSize>=100000){
+                oneTimeData = []
+                await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
+                console.log("done")
+            }else if(nowFileMaxSize <=can.length){
+                oneTimeData = []
+                await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
+                console.log("done")
             }
-            // targetList[targetIndex].sendSys.write(data)
         }
     })
     socket.on("close",()=>{

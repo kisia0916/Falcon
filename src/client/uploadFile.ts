@@ -8,10 +8,11 @@ export const uploadFile = (path:string,ulFilePath:string)=>{
     console.log(filesize)
     const sendFileName = JSON.stringify(createSendData("sendFileName",[fileName,filesize,path,ulFilePath]))
     client.write(sendFileName)  
+    const maxSend:number = 1000
+    let splitData:any[] = []
     fs.readFile(path,(err,data)=>{
         // const sendDataFile = JSON.stringify(createSendData("sendFileBuffer",[binary]))
-        console.log(data)
         const sendDataFile = data
-        client.write(sendDataFile) 
+        client.write(sendDataFile)         
     })
 }
