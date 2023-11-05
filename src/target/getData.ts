@@ -43,8 +43,8 @@ export const getSendData = async(data:string)=>{
             ulFileName = getData.data[0]
             ulFileMax = getData.data[1]
             ulFilePath = getData.data[2]
-            nowConnectionClient = getData.data[4]
-            console.log(ulFileMax,ulFileName,ulFilePath,getData.data[2])
+            nowConnectionClient = getData.data[3]
+            console.log(ulFileMax,ulFileName,ulFilePath,nowConnectionClient)
         }
     }else{
         console.log("start")
@@ -52,31 +52,19 @@ export const getSendData = async(data:string)=>{
         const can = Buffer.concat(oneTimeData)
         ulFileNowSize = Buffer.concat(oneTimeData).length
         console.log(ulFilePath)
-        if(ulFileNowSize>=100000){
+        oneTimeData = []
+        await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
+        console.log("done")
+        if(ulFileMax<=fs.statSync(ulFilePath).size){
+            const sendData = JSON.stringify(createSendData("doneUploadTarget",[nowConnectionClient]))
+            target.write(sendData)
             oneTimeData = []
-            await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
-            console.log("done")
-            
-            if(ulFileMax<=fs.statSync(ulFilePath).size){
-                const sendData = JSON.stringify(createSendData("doneUploadTarget",[nowConnectionClient]))
-                target.write(sendData)
-            }
-        }else if(ulFileNowSize <=can.length){
-            oneTimeData = []
-            await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
-            console.log("done")
-            if(ulFileMax<=fs.statSync(ulFilePath).size){
-                const sendData = JSON.stringify(createSendData("doneUploadTarget",[nowConnectionClient]))
-                target.write(sendData)
-            }
-        }else{
-            oneTimeData = []
-            await fs.writeFileSync(`${ulFilePath}`,can,{flag:'a'})
-            console.log("done")
-            if(ulFileMax<=fs.statSync(ulFilePath).size){
-                const sendData = JSON.stringify(createSendData("doneUploadTarget",[nowConnectionClient]))
-                target.write(sendData)
-            }
+            startUpload = false
+            ulFileMax = 0
+            ulFileName = ""
+            ulFilePath = ""
+            ulFileNowSize = 0
+            nowSize = 0
         }
     }
 }

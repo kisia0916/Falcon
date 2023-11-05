@@ -31,6 +31,7 @@ server.on("connection",(socket)=>{
     let firstUL:boolean = true
     let nowFileSize:number = 0
     let nowFileMaxSize:number = 0
+    let deleteFileName:string = ""
     let test:any[] = []
     let oneTimeData:any[] = []
     const oneDataSize:number = 3000
@@ -99,12 +100,17 @@ server.on("connection",(socket)=>{
                 nowFilePath = getData.data[3]
                 startUL = true
                 firstUL = true
+                console.log(getData.data)
                 const clientIndex:number = clientList.findIndex(elem=>elem.id === id)
                 const targetIndex:number = targetList.findIndex(elem=>elem.id == clientList[clientIndex].conTarget)
                 targetID = targetList[targetIndex].id
             }else if(getData.type === "doneUploadTarget"){
                 console.log(id)
                 console.log(getData.data[0])
+                const clientIndex = clientList.findIndex(elem=>elem.id === getData.data[0])
+                const sendData = JSON.stringify(createSendData("doneTargetUpload",[]))
+                clientList[clientIndex].sendSys.write(sendData)
+                deleteUpload()
             }
         }else{
             const targetIndex:number = targetList.findIndex(elem=>elem.id === targetID)
@@ -115,63 +121,25 @@ server.on("connection",(socket)=>{
             oneTimeData.push(data)
             const can = Buffer.concat(oneTimeData)
             nowFileSize = Buffer.concat(oneTimeData).length
-            if(nowFileSize>=100000){
-                oneTimeData = []
-                await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
-                console.log("done")
-                const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
-                if(fileSize>=nowFileMaxSize){
-                    console.log("ooooooooooooooooooooooooooooo")
-                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath,id]))
-                    targetList[targetIndex].sendSys.write(sendData)
-                    nowFileName = ""
-                    nowFilePath = ""
-                    startUL = false
-                    firstUL = true
-                    nowFileSize = 0
-                    nowFileMaxSize = 0
-                    uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
-                    const doneData = JSON.stringify(createSendData("doneUploadServer",[]))
-                    socket.write(doneData)
-                }
-            }else if(nowFileMaxSize <=can.length){
-                oneTimeData = []
-                await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
-                console.log("done")
-                const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
-                if(fileSize>=nowFileMaxSize){
-                    console.log("ooooooooooooooooooooooooooooo")
-                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath,id]))
-                    targetList[targetIndex].sendSys.write(sendData)
-                    nowFileName = ""
-                    nowFilePath = ""
-                    startUL = false
-                    firstUL = true
-                    nowFileSize = 0
-                    nowFileMaxSize = 0
-                    uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
-                    const doneData = JSON.stringify(createSendData("doneUploadServer",[]))
-                    socket.write(doneData)
-                }
-            }else{
-                oneTimeData = []
-                await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
-                console.log("done")
-                const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
-                if(fileSize>=nowFileMaxSize){
-                    console.log("ooooooooooooooooooooooooooooo")
-                    const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath]))
-                    targetList[targetIndex].sendSys.write(sendData)
-                    nowFileName = ""
-                    nowFilePath = ""
-                    startUL = false
-                    firstUL = true
-                    nowFileSize = 0
-                    nowFileMaxSize = 0
-                    uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
-                    const doneData = JSON.stringify(createSendData("doneUploadServer",[]))
-                    socket.write(doneData)
-                }
+            oneTimeData = []
+            await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
+            deleteFileName = `./uploadFile/upload.${fileType}`
+            console.log(deleteFileName)
+            console.log("done")
+            const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
+            if(fileSize>=nowFileMaxSize){
+                console.log("ooooooooooooooooooooooooooooo")
+                const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath,id]))
+                targetList[targetIndex].sendSys.write(sendData)
+                nowFilePath = ""
+                nowFileName = ""
+                startUL = false
+                firstUL = true
+                nowFileSize = 0
+                nowFileMaxSize = 0
+                uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
+                const doneData = JSON.stringify(createSendData("doneUploadServer",[]))
+                socket.write(doneData)
             }
         }
     })
@@ -198,7 +166,14 @@ const uploadFile = (socket:any,path:string)=>{
     }) 
 }
 
-
+const deleteUpload = ()=>{
+    fs.readdir("./uploadFile",(error,data)=>{
+        data.forEach((i)=>{
+            console.log(i)
+            fs.unlink(`./uploadFile/${i}`,(error)=>{})
+        })
+    })
+}
 server.listen(PORT,()=>{
     console.log("server run")
 })
