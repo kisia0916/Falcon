@@ -101,9 +101,7 @@ server.on("connection",(socket)=>{
                 firstUL = true
                 const clientIndex:number = clientList.findIndex(elem=>elem.id === id)
                 const targetIndex:number = targetList.findIndex(elem=>elem.id == clientList[clientIndex].conTarget)
-                const sendData = JSON.stringify(createSendData("startUpload",[nowFileName,nowFileMaxSize,nowFilePath,getData.data[3],id]))
                 targetID = targetList[targetIndex].id
-                targetList[targetIndex].sendSys.write(sendData)
             }else if(getData.type === "doneUploadTarget"){
                 console.log(id)
                 console.log(getData.data[0])
