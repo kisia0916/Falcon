@@ -29,6 +29,7 @@ server.on("connection",(socket)=>{
     let nowFilePath:string = ""
     let startUL:boolean = false
     let firstUL:boolean = true
+    let startDl:any = undefined
     let nowFileSize:number = 0
     let nowFileMaxSize:number = 0
     let deleteFileName:string = ""
@@ -37,7 +38,7 @@ server.on("connection",(socket)=>{
     const oneDataSize:number = 3000
     let targetID:string = ""
     socket.on("data",async(data:string)=>{
-        if(!startUL){
+        if(!startUL && !startDl){
             const getData:tcpDataType = JSON.parse(data)
             if(getData.type === "first-target"){
                 console.log(getData.data)
@@ -111,8 +112,19 @@ server.on("connection",(socket)=>{
                 const sendData = JSON.stringify(createSendData("doneTargetUpload",[]))
                 clientList[clientIndex].sendSys.write(sendData)
                 deleteUpload()
+            }else if(getData.type === "startDownload"){
+                console.log(startDl)
+                const clientIndex = clientList.findIndex(elem=>elem.id === id)
+                const targetID = clientList[clientIndex].conTarget
+                const targetIndex = targetList.findIndex(elem=>elem.id === targetID)
+                const sendData = JSON.stringify(createSendData("startDownload",[getData.data[0]]))
+                targetList[targetIndex].sendSys.write(sendData)
+            }else if(getData.type === "dlStartFlg"){
+                startDl = true
+                nowFilePath = getData.data[0]
+                nowFileMaxSize = getData.data[1]
             }
-        }else{
+        }else if(startUL){
             const targetIndex:number = targetList.findIndex(elem=>elem.id === targetID)
             const fileType:string = nowFileName.split(".")[1]
             console.log("start")
@@ -140,6 +152,19 @@ server.on("connection",(socket)=>{
                 uploadFile(targetList[targetIndex].sendSys,`./uploadFile/upload.${fileType}`)
                 const doneData = JSON.stringify(createSendData("doneUploadServer",[]))
                 socket.write(doneData)
+            }
+        }else if(startDl){
+            console.log(data)
+            const fileType = nowFilePath.split(".")[1]
+            oneTimeData.push(data)
+            const can = Buffer.concat(oneTimeData)
+            nowFileSize = Buffer.concat(oneTimeData).length
+            oneTimeData = []
+            await fs.writeFileSync(`./uploadFile/upload.${fileType}`,can,{flag:'a'})
+            console.log("done")
+            const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
+            if(fileSize>=nowFileMaxSize){
+                console.log("upload done")
             }
         }
     })

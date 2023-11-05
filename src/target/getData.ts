@@ -7,14 +7,19 @@ import { createSendData } from "../functions/createSendData"
 let runCmdList:string[] = []
 let oneTimeData:any[] = []
 export let startUpload:boolean = false
+export let startDownload:boolean = false
 let ulFileName:string = ""
 let ulFileMax:number = 0
 let ulFilePath:string = ""
 let ulFileNowSize:number = 0
 let nowConnectionClient:string = ""
 let nowSize:number = 0
+
+let dlFilePath:string = ""
+
+
 export const getSendData = async(data:string)=>{
-    if(!startUpload){
+    if(!startUpload && !startDownload){
         const getData = JSON.parse(data)
         if(getData.type === "sendCmd"){
             console.log(getData.data[0])
@@ -45,8 +50,13 @@ export const getSendData = async(data:string)=>{
             ulFilePath = getData.data[2]
             nowConnectionClient = getData.data[3]
             console.log(ulFileMax,ulFileName,ulFilePath,nowConnectionClient)
+        }else if(getData.type === "startDownload"){
+            console.log(getData.data[0])
+            startDownload = true
+            dlFilePath = getData.data[0]
+            uploadServer(dlFilePath)
         }
-    }else{
+    }else if(startUpload){
         console.log("start")
         oneTimeData.push(data)
         const can = Buffer.concat(oneTimeData)
@@ -67,4 +77,13 @@ export const getSendData = async(data:string)=>{
             nowSize = 0
         }
     }
+}
+const uploadServer = (path:string)=>{
+    console.log("start server upload")
+    const fileSize:number = fs.statSync(path).size
+    const sendData = JSON.stringify(createSendData("dlStartFlg",[path,fileSize]))
+    target.write(sendData)
+    fs.readFile(dlFilePath,(error,data)=>{
+        target.write(data)
+    })
 }

