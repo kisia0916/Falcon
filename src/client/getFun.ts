@@ -48,11 +48,14 @@ export const getFun = async(data:string,client:any)=>{
                     client.write(sendData)
                 }catch{
                     console.log("error")
+                    
                 }
                 
             }else if(getData.type === "connectedInfo"){
                 console.log(`Successful connection to ${getData.data[0].globalIP}:${getData.data[0].localIP}`)
                 getMainCommand(`${getData.data[0].globalIP}:${getData.data[0].localIP}`)
+            }else if(getData.type === "connect-error"){
+                console.log("can not connect")
             }else if(getData.type === "cmdResoultClient"){
                 console.log(getData.data[0])
                 getMainCommand(userIP)

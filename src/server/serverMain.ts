@@ -77,14 +77,18 @@ server.on("connection",(socket)=>{
                     const sendData = JSON.stringify(createSendData("targetList",[publickTargetList]))
                     socket.write(sendData)
                 }else if(getData.type === "select-target"){
-                    console.log(getData.data[0])
-                    const clientIndex = clientList.findIndex(elem=>elem.id ===id)
-                    clientList[clientIndex].conTarget = getData.data[0]
-                    const targetIndex = publickTargetList.findIndex(elem=>elem.id === getData.data[0])
-                    const sendData = JSON.stringify(createSendData("connectedInfo",[publickTargetList[targetIndex]]))
-                    socket.write(sendData)
-                    console.log(clientList)
-
+                    if(clientList.findIndex(elem=>elem.conTarget === getData.data[0]) === -1){
+                        console.log(getData.data[0])
+                        const clientIndex = clientList.findIndex(elem=>elem.id ===id)
+                        clientList[clientIndex].conTarget = getData.data[0]
+                        const targetIndex = publickTargetList.findIndex(elem=>elem.id === getData.data[0])
+                        const sendData = JSON.stringify(createSendData("connectedInfo",[publickTargetList[targetIndex]]))
+                        socket.write(sendData)
+                        console.log(clientList)
+                    }else{
+                        const sendData = JSON.stringify(createSendData("connect-error",[]))
+                        socket.write(sendData)
+                    }
                 }else if(getData.type === "sendCmdText"){
                     const clientIndex:number = clientList.findIndex(elem=>elem.id === id)
                     const targetIP:string = clientList[clientIndex].conTarget
