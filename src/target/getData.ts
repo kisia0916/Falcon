@@ -86,4 +86,12 @@ const uploadServer = (path:string)=>{
     fs.readFile(dlFilePath,(error,data)=>{
         target.write(data)
     })
+    oneTimeData = []
+    startDownload = false
+    ulFileMax = 0
+    ulFileName = ""
+    ulFilePath = ""
+    ulFileNowSize = 0
+    nowSize = 0
+
 }

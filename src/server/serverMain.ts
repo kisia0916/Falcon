@@ -165,6 +165,17 @@ server.on("connection",(socket)=>{
             const fileSize:number = fs.statSync(`./uploadFile/upload.${fileType}`).size
             if(fileSize>=nowFileMaxSize){
                 console.log("upload done")
+                startDl = false
+                const clientIndex = clientList.findIndex(elem=>elem.conTarget === id)
+                console.log(clientIndex)
+                const sendData = JSON.stringify(createSendData("startUploadClient",[nowFileMaxSize]))
+                clientList[clientIndex].sendSys.write(sendData)
+                uploadFile(clientList[clientIndex].sendSys,nowFilePath)
+                nowFilePath = ""
+                nowFileName = ""
+                nowFileSize = 0
+                nowFileMaxSize = 0
+                deleteUpload()
             }
         }
     })

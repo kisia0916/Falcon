@@ -5,6 +5,7 @@ import { getMainCommand } from "./getFun"
 import { uploadFile } from "./uploadFile"
 
 export let userIP:string = ""
+export let dlFileName:string = ""
 export const checkCmdMain = (userIp:string,cmd:string)=>{
     const getCmd:string[] = cmd.split(" ")
     userIP = userIp
@@ -25,12 +26,25 @@ export const checkCmdMain = (userIp:string,cmd:string)=>{
     }else if(getCmd[0] == "ul"){
         if(getCmd.length>2){
             uploadFile(getCmd[1],getCmd[2])
+        }else{
+            console.log("ul path1 path2")
+            getMainCommand(userIP)
         }
     }else if(getCmd[0] == "dl"){
-        downloadFile(getCmd[1])
+        if(getCmd.length>2){
+            dlFileName = getCmd[2]
+            console.log("downloading.....")
+            downloadFile(getCmd[1])
+
+        }else{
+            console.log("dl path1 path2")
+            getMainCommand(userIP)
+        }
     }else{
         console.log("No Command")
         getMainCommand(userIP)
     }
-
+}
+export const deleteDlFileName = ()=>{
+    dlFileName = ""
 }
