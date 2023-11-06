@@ -30,19 +30,25 @@ const reconectTry = async()=>{
     client = undefined
     const data = await getInput("reconect?(y/n):")
     if(data === "y"){
-        client = new net.Socket()
-        client.connect(port,host,()=>{
-            console.log(`connected ${host}:${port}`)
-            const sendData = JSON.stringify(createSendData("first-client",[]))
-            client.write(sendData)
-        })
-        client.on("error",(error:any)=>{
-            client.end()
-            reconectTry()
-        })
-        client.on("data",(data:string)=>{
-            getFun(data,client)
-        })
+        try{
+            client = new net.Socket()
+            client.connect(port,host,()=>{
+                console.log(`connected ${host}:${port}`)
+                const sendData = JSON.stringify(createSendData("first-client",[]))
+                client.write(sendData)
+            })
+            client.on("error",(error:any)=>{
+                client.end()
+                reconectTry()
+            })
+            client.on("data",(data:string)=>{
+                getFun(data,client)
+            })
+        }catch(error){
+            console.log("error")
+        }
+    }else{
+        process.exit()
     }
 }
 firstInit()
