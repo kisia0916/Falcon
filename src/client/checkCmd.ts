@@ -40,6 +40,9 @@ export const checkCmdMain = (userIp:string,cmd:string)=>{
             console.log("dl path1 path2")
             getMainCommand(userIP)
         }
+    }else if(getCmd[0] == "mkdir"){
+        const sendData = JSON.stringify(createSendData("sendCmdText",[cmd]))
+        client.write(sendData)
     }else{
         console.log("No Command")
         getMainCommand(userIP)
