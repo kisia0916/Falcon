@@ -70,7 +70,14 @@ export const getFun = async(data:string,client:any)=>{
                 startDl = true
                 dlFileMax = getData.data[0]
             }else if(getData.type === "errorUpload"){
-                console.log("error upload ✖")
+                console.log("upload error ✖")
+                getMainCommand(userIP)
+            }else if(getData.type === "dlError"){
+                console.log("download error ✖")
+                deleteDlFileName()
+                dlFileNowSize = 0
+                dlFileMax = 0
+                startDl = false
                 getMainCommand(userIP)
             }
         }else{
@@ -90,7 +97,11 @@ export const getFun = async(data:string,client:any)=>{
             }
         }
     }catch(error){
-        console.log("error")
+        console.log(error)
+        deleteDlFileName()
+        startDl = false
+        dlFileNowSize = 0
+        dlFileMax = 0
         getMainCommand(userIP)
     }
 }

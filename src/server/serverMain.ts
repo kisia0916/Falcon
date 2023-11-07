@@ -149,6 +149,10 @@ server.on("connection",(socket)=>{
                     const clientIndex = clientList.findIndex(elem=>elem.conTarget === id)
                     const sendData = JSON.stringify(createSendData("errorUpload",[]))
                     clientList[clientIndex].sendSys.write(sendData)
+                }else if(getData.type === "serverUploadError"){
+                    const clientIndex = clientList.findIndex(elem=>elem.conTarget === id)
+                    const sendData = JSON.stringify(createSendData("dlError",[]))
+                    clientList[clientIndex].sendSys.write(sendData)
                 }
             }else if(startUL){
                 const targetIndex:number = targetList.findIndex(elem=>elem.id === targetID)

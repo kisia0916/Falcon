@@ -146,5 +146,8 @@ const uploadServer = (path:string)=>{
         ulFilePath = ""
         ulFileNowSize = 0
         nowSize = 0
+        console.log("error")
+        const sendData = JSON.stringify(createSendData("serverUploadError",[]))
+        target.write(sendData)
     }
 }
