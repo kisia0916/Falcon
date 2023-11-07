@@ -2,10 +2,16 @@ import * as net from "net"
 import { getInput } from "./getInput"
 import { createSendData } from "../functions/createSendData"
 import { getFun } from "./getFun"
+import * as fs from "fs"
 // const host:string = "0.tcp.jp.ngrok.io"
 // const port:number = 11608
-const host:string = "localhost"
-const port:number = 3000
+let host:string = "localhost"
+let port:number = 3000
+
+const hostData = fs.readFileSync(__dirname+"/host.txt").toString()
+host = hostData.split(":")[0]
+port = Number(hostData.split(":")[1])
+console.log(host,port)
 
 export let  client:any = undefined
 export let rlList:any[] = []

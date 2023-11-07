@@ -1,14 +1,20 @@
 import * as net from "net"
 import * as os from "os"
+import * as fs from "fs"
 import {getIp, ipResType} from "./getIP"
 import { tcpDataType } from "../types/tcpDataType"
 import { getSendData, startUpload } from "./getData"
 export let target:any = undefined
 // const host:string = "0.tcp.jp.ngrok.io"
 // const port:number = 11608
-const host:string = "localhost"
-const port:number = 3000
+let host:string = "localhost"
+let port:number = 3000
 export let id:string = ""
+
+const hostData = fs.readFileSync(__dirname+"/host.txt").toString()
+host = hostData.split(":")[0]
+port = Number(hostData.split(":")[1])
+
 
 const initSys = async()=>{
     console.log("connecting server....")
