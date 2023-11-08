@@ -1,6 +1,6 @@
 import * as net from "net"
 import { getInput } from "./getInput"
-import { createSendData } from "../functions/createSendData"
+import { createSendData } from "./createSendData"
 import { getFun } from "./getFun"
 import * as fs from "fs"
 // const host:string = "0.tcp.jp.ngrok.io"

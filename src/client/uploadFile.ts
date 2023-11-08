@@ -1,6 +1,6 @@
 import * as fs from "fs"
 import { client } from "./clientMain"
-import { createSendData } from "../functions/createSendData"
+import { createSendData } from "./createSendData"
 import { getInput } from "./getInput"
 import { userIP } from "./checkCmd"
 import { getMainCommand } from "./getFun"

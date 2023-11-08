@@ -1,4 +1,4 @@
-import { createSendData } from "../functions/createSendData"
+import { createSendData } from "./createSendData"
 import * as fs from "fs"
 import { deleteDlFileName, dlFileName, userIP } from "./checkCmd"
 import { client } from "./clientMain"

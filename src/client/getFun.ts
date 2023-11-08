@@ -1,4 +1,4 @@
-import { createSendData } from "../functions/createSendData"
+import { createSendData } from "./createSendData"
 import { checkCmdMain, deleteDlFileName, dlFileName, userIP } from "./checkCmd"
 import { getInput } from "./getInput"
 import * as fs from "fs"

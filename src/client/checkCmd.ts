@@ -1,4 +1,4 @@
-import { createSendData } from "../functions/createSendData"
+import { createSendData } from "./createSendData"
 import { client } from "./clientMain"
 import { downloadFile } from "./download"
 import { getMainCommand } from "./getFun"

@@ -2,7 +2,7 @@ import { id, target } from "./targetMain"
 import {exec} from "child_process"
 import * as fs from "fs"
 import Encoding from  'encoding-japanese'
-import { createSendData } from "../functions/createSendData"
+import { createSendData } from "./createSendData"
 
 let runCmdList:string[] = []
 let oneTimeData:any[] = []
