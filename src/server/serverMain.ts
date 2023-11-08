@@ -198,7 +198,7 @@ server.on("connection",(socket)=>{
                     console.log(clientIndex)
                     const sendData = JSON.stringify(createSendData("startUploadClient",[nowFileMaxSize]))
                     clientList[clientIndex].sendSys.write(sendData)
-                    uploadFile(clientList[clientIndex].sendSys,nowFilePath)
+                    uploadFile(clientList[clientIndex].sendSys,`./uploadFile/upload.${fileType}`)
                     nowFilePath = ""
                     nowFileName = ""
                     nowFileSize = 0
@@ -235,6 +235,7 @@ server.on("connection",(socket)=>{
 const uploadFile = (socket:any,path:string)=>{
     console.log(path)
     fs.readFile(path,(error,data)=>{
+        console.log(data)
         socket.write(data)
     }) 
 }
