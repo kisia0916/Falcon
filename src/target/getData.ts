@@ -16,7 +16,7 @@ let nowConnectionClient:string = ""
 let nowSize:number = 0
 
 let dlFilePath:string = ""
-
+let sendLsData:any = ""
 
 export const getSendData = async(data:string)=>{
     if(!startUpload && !startDownload){
@@ -33,7 +33,14 @@ export const getSendData = async(data:string)=>{
             exec(runCmd,{encoding:'utf-8'},(error: any, stdout: any, stderr: any)=>{
                 if(!error && !stderr){
                     const sendData = JSON.stringify(createSendData("cmdResoult",[getData.data[1],stdout]))
-                    target.write(sendData)
+                    if(getData.data[0].split(" ")[0] === "dir"){
+                        sendLsData = JSON.stringify(createSendData("cmdResoult",[stdout]))
+                        const lsSize:number = Buffer.from(sendLsData).length
+                        const sendData2 = JSON.stringify(createSendData("lsSize",[lsSize]))
+                        target.write(sendData2)
+                    }else{
+                        target.write(sendData)
+                    }
                     if(cmdList[0] == "cd"){
                         runCmdList.push(getData.data[0])
                     }
@@ -99,6 +106,11 @@ export const getSendData = async(data:string)=>{
             startDownload = true
             dlFilePath = getData.data[0]
             uploadServer(dlFilePath)
+        }else if(getData.type === "startSendCmdResult"){
+            console.log("start cmd")
+            const sendData = JSON.stringify(createSendData("cmdResult",[sendLsData]))
+            target.write(sendData)
+            sendLsData = ""
         }
     }else if(startUpload){
         console.log("start")
