@@ -33,14 +33,7 @@ export const getSendData = async(data:string)=>{
             exec(runCmd,{encoding:'utf-8'},(error: any, stdout: any, stderr: any)=>{
                 if(!error && !stderr){
                     const sendData = JSON.stringify(createSendData("cmdResoult",[getData.data[1],stdout]))
-                    if(getData.data[0].split(" ")[0] === "dir"){
-                        sendLsData = JSON.stringify(createSendData("cmdResoult",[stdout]))
-                        const lsSize:number = Buffer.from(sendLsData).length
-                        const sendData2 = JSON.stringify(createSendData("lsSize",[lsSize]))
-                        target.write(sendData2)
-                    }else{
-                        target.write(sendData)
-                    }
+                    target.write(sendData)
                     if(cmdList[0] == "cd"){
                         runCmdList.push(getData.data[0])
                     }
@@ -49,7 +42,6 @@ export const getSendData = async(data:string)=>{
                     target.write(sendData)
                 }
             })
-
         }else if(getData.type === "startUpload"){
             let dirList:string[] = getData.data[2].split("/")
             let dir:string = ""

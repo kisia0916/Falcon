@@ -79,8 +79,6 @@ export const getFun = async(data:string,client:any)=>{
                 dlFileMax = 0
                 startDl = false
                 getMainCommand(userIP)
-            }else if(getData.type === "cmdResoult"){
-                console.log(getData.data[0])
             }
         }else{
             oneTimeData.push(data)

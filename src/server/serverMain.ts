@@ -33,9 +33,6 @@ server.on("connection",(socket)=>{
     let nowFileSize:number = 0
     let nowFileMaxSize:number = 0
     let deleteFileName:string = ""
-    let nowCmdResult:string = ""
-    let nowCmdSize:number = 0
-    let nowCmdResultMax:number = 0
     let test:any[] = []
     let oneTimeData:any[] = []
     const oneDataSize:number = 3000
@@ -156,23 +153,6 @@ server.on("connection",(socket)=>{
                     const clientIndex = clientList.findIndex(elem=>elem.conTarget === id)
                     const sendData = JSON.stringify(createSendData("dlError",[]))
                     clientList[clientIndex].sendSys.write(sendData)
-                }else if(getData.type === "lsSize"){
-                    nowCmdResultMax = getData.data[0]
-                    const sendData = JSON.stringify(createSendData("startSendCmdResult",[]))
-                    socket.write(sendData)
-                }else if (getData.type === "cmdResult"){
-                    nowCmdResult = nowCmdResult.concat(getData.data[0])
-                    nowCmdSize = Buffer.from(nowCmdResult).length
-                    console.log(nowCmdResult)
-                    if(nowCmdSize>=nowCmdResultMax){
-                        console.log("send done")
-                        nowCmdResultMax = 0
-                        nowCmdSize = 0
-                        const clientIndex = clientList.findIndex(elem=>elem.conTarget === id)
-                        const sendData = nowCmdResult
-                        nowCmdResult = ""
-                        clientList[clientIndex].sendSys.write(sendData)
-                    }
                 }
             }else if(startUL){
                 const targetIndex:number = targetList.findIndex(elem=>elem.id === targetID)
